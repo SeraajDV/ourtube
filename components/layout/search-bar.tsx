@@ -1,6 +1,7 @@
 "use client";
 
 import { Mic, Search, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import SpeechRecognition, {
   useSpeechRecognition,
@@ -8,12 +9,18 @@ import SpeechRecognition, {
 
 function SearchBar() {
   const [query, setQuery] = useState("");
+  const [hasMounted, setHasMounted] = useState(false);
+  const router = useRouter();
   const {
     transcript,
     listening,
     browserSupportsSpeechRecognition,
     resetTranscript,
   } = useSpeechRecognition();
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   useEffect(() => {
     if (transcript) setQuery(transcript);
@@ -27,6 +34,9 @@ function SearchBar() {
       SpeechRecognition.startListening();
     }
   };
+
+  const canUseVoice = hasMounted && browserSupportsSpeechRecognition;
+  const isListening = hasMounted && listening;
 
   return (
     <div className="flex items-center gap-1 w-full max-w-xl">
@@ -50,17 +60,18 @@ function SearchBar() {
         <button
           className="ml-3 -mr-2 h-10 w-10 flex items-center justify-center border-l border-input text-muted-foreground hover:text-foreground"
           aria-label="Search"
+          onClick={() => router.push(`/search?query=${query}`)}
         >
           <Search size={16} />
         </button>
       </div>
       <button
-        onClick={browserSupportsSpeechRecognition ? toggleListening : undefined}
-        disabled={!browserSupportsSpeechRecognition}
+        onClick={canUseVoice ? toggleListening : undefined}
+        disabled={!canUseVoice}
         className="h-10 w-10 flex items-center justify-center rounded-full bg-secondary text-muted-foreground hover:text-foreground disabled:opacity-40 disabled:cursor-not-allowed"
-        aria-label={listening ? "Stop voice input" : "Search by voice"}
+        aria-label={isListening ? "Stop voice input" : "Search by voice"}
       >
-        <Mic size={16} className={listening ? "text-red-500" : ""} />
+        <Mic size={16} className={isListening ? "text-red-500" : ""} />
       </button>
     </div>
   );

@@ -5,7 +5,7 @@ export default function Logo() {
   return (
     <Link href="/">
       <div className="flex items-center">
-        <div className="bg-primary px-2.5 py-1 rounded-sm mr-1">
+        <div className="bg-primary px-2.5 py-1 rounded-sm mr-1 text-white">
           <PauseIcon size={12} />
         </div>
         <h1 className="font-bold text-lg leading-tight tracking-tight">
