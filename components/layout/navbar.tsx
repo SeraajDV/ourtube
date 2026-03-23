@@ -1,4 +1,4 @@
-import { Menu, Pause, PauseIcon } from "lucide-react";
+import { Menu, PauseIcon } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -6,6 +6,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
+import SearchBar from "./search-bar";
 
 function Navbar() {
   return (
@@ -19,10 +20,14 @@ function Navbar() {
             <div className="bg-primary px-2.5 py-1 rounded-sm mr-1">
               <PauseIcon size={12} />
             </div>
-            <h1 className="font-bold text-lg leading-tight tracking-tight">OurTube</h1>
+            <h1 className="font-bold text-lg leading-tight tracking-tight">
+              OurTube
+            </h1>
           </div>
         </div>
-        <div className="flex-1 bg-amber-400">middle</div>
+        <div className="flex-1 flex justify-center">
+          <SearchBar />
+        </div>
         <div>
           <p className="">lol</p>
         </div>
