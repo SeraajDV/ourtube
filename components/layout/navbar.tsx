@@ -1,4 +1,5 @@
-import { Menu, PauseIcon } from "lucide-react";
+import { Menu } from "lucide-react";
+import { ThemeToggle } from "../theme/theme-toggle";
 import {
   Sheet,
   SheetContent,
@@ -6,6 +7,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
+import AppAvatar from "./app-avatar";
+import Logo from "./logo";
 import SearchBar from "./search-bar";
 
 function Navbar() {
@@ -16,20 +19,14 @@ function Navbar() {
           <SheetTrigger>
             <Menu size={22} />
           </SheetTrigger>
-          <div className="flex items-center">
-            <div className="bg-primary px-2.5 py-1 rounded-sm mr-1">
-              <PauseIcon size={12} />
-            </div>
-            <h1 className="font-bold text-lg leading-tight tracking-tight">
-              OurTube
-            </h1>
-          </div>
+          <Logo />
         </div>
         <div className="flex-1 flex justify-center">
           <SearchBar />
         </div>
-        <div>
-          <p className="">lol</p>
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
+          <AppAvatar />
         </div>
       </nav>
       <SheetContent side="left" showCloseButton={false}>
