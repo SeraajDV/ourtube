@@ -1,10 +1,32 @@
 "use client";
 
 import { Mic, Search, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
 
 function SearchBar() {
   const [query, setQuery] = useState("");
+  const {
+    transcript,
+    listening,
+    browserSupportsSpeechRecognition,
+    resetTranscript,
+  } = useSpeechRecognition();
+
+  useEffect(() => {
+    if (transcript) setQuery(transcript);
+  }, [transcript]);
+
+  const toggleListening = () => {
+    if (listening) {
+      SpeechRecognition.stopListening();
+    } else {
+      resetTranscript();
+      SpeechRecognition.startListening();
+    }
+  };
 
   return (
     <div className="flex items-center gap-1 w-full max-w-xl">
@@ -33,10 +55,12 @@ function SearchBar() {
         </button>
       </div>
       <button
-        className="h-10 w-10 flex items-center justify-center rounded-full bg-secondary text-muted-foreground hover:text-foreground"
-        aria-label="Search by voice"
+        onClick={browserSupportsSpeechRecognition ? toggleListening : undefined}
+        disabled={!browserSupportsSpeechRecognition}
+        className="h-10 w-10 flex items-center justify-center rounded-full bg-secondary text-muted-foreground hover:text-foreground disabled:opacity-40 disabled:cursor-not-allowed"
+        aria-label={listening ? "Stop voice input" : "Search by voice"}
       >
-        <Mic size={16} />
+        <Mic size={16} className={listening ? "text-red-500" : ""} />
       </button>
     </div>
   );
