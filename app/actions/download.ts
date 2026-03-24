@@ -1,5 +1,7 @@
 "use server";
 
+import { redirect } from "next/navigation";
+
 const RAPIDAPI_HOST = "yt-search-and-download-mp3.p.rapidapi.com";
 const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY!;
 
@@ -32,4 +34,14 @@ export async function downloadMp3(videoId: string) {
 
   const result = await response.text();
   return JSON.parse(result) as DownloadApiResponse;
+}
+
+export async function downloadMp3Redirect(videoId: string) {
+  const result = await downloadMp3(videoId);
+
+  if (typeof result.link !== "string" || !result.link.trim()) {
+    throw new Error("Download link is unavailable");
+  }
+
+  redirect(result.link);
 }

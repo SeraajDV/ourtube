@@ -1,3 +1,6 @@
+import { downloadMp3Redirect } from "@/app/actions/download";
+import { Button } from "@/components/ui/button";
+
 export type RawVideo = Record<string, unknown>;
 
 interface SearchResultsGridProps {
@@ -121,6 +124,41 @@ function getVideoUrl(video: RawVideo): string {
   return "#";
 }
 
+function getVideoId(video: RawVideo): string | undefined {
+  const directId = firstString([
+    fromRecord(video, "videoId"),
+    fromRecord(video, "id"),
+  ]);
+
+  if (directId) {
+    return directId;
+  }
+
+  const href = getVideoUrl(video);
+
+  if (href === "#") {
+    return undefined;
+  }
+
+  try {
+    const url = new URL(href);
+    const queryId = url.searchParams.get("v");
+
+    if (queryId?.trim()) {
+      return queryId;
+    }
+
+    if (url.hostname === "youtu.be") {
+      const pathId = url.pathname.slice(1).trim();
+      return pathId || undefined;
+    }
+  } catch {
+    return undefined;
+  }
+
+  return undefined;
+}
+
 export function SearchResultsGrid({
   searchQuery,
   videos,
@@ -143,56 +181,72 @@ export function SearchResultsGrid({
             const avatar = getChannelAvatar(video);
             const duration = getDuration(video);
             const href = getVideoUrl(video);
+            const videoId = getVideoId(video);
+            const downloadAction = videoId
+              ? downloadMp3Redirect.bind(null, videoId)
+              : undefined;
 
             return (
-              <a
-                key={`${title}-${index}`}
-                href={href}
-                className="group block space-y-2.5"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <div className="relative aspect-video overflow-hidden rounded-2xl bg-neutral-800">
-                  {thumbnail ? (
-                    <div
-                      className="h-full w-full bg-cover bg-center transition-transform duration-300 group-hover:scale-[1.03]"
-                      style={{ backgroundImage: `url('${thumbnail}')` }}
-                    />
-                  ) : (
-                    <div className="h-full w-full bg-[radial-gradient(circle_at_top,rgba(82,82,82,0.6),rgba(38,38,38,1))]" />
-                  )}
-                  {duration ? (
-                    <span className="absolute bottom-2 right-2 rounded-md bg-black/80 px-1.5 py-0.5 text-[11px] font-medium text-white">
-                      {duration}
-                    </span>
-                  ) : null}
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="h-8 w-8 shrink-0 overflow-hidden rounded-full bg-neutral-700">
-                    {avatar ? (
+              <article key={`${title}-${index}`} className="space-y-2.5">
+                <a
+                  href={href}
+                  className="group block space-y-2.5"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <div className="relative aspect-video overflow-hidden rounded-2xl bg-neutral-800">
+                    {thumbnail ? (
                       <div
-                        className="h-full w-full bg-cover bg-center"
-                        style={{ backgroundImage: `url('${avatar}')` }}
+                        className="h-full w-full bg-cover bg-center transition-transform duration-300 group-hover:scale-[1.03]"
+                        style={{ backgroundImage: `url('${thumbnail}')` }}
                       />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center text-xs font-semibold uppercase text-neutral-200">
-                        {channelName.charAt(0)}
-                      </div>
+                      <div className="h-full w-full bg-[radial-gradient(circle_at_top,rgba(82,82,82,0.6),rgba(38,38,38,1))]" />
                     )}
+                    {duration ? (
+                      <span className="absolute bottom-2 right-2 rounded-md bg-black/80 px-1.5 py-0.5 text-[11px] font-medium text-white">
+                        {duration}
+                      </span>
+                    ) : null}
                   </div>
 
-                  <div className="min-w-0 flex-1">
-                    <h2 className="line-clamp-2 text-base font-medium leading-snug text-neutral-50 transition-colors group-hover:text-white">
-                      {title}
-                    </h2>
-                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="h-8 w-8 shrink-0 overflow-hidden rounded-full bg-neutral-700">
+                      {avatar ? (
+                        <div
+                          className="h-full w-full bg-cover bg-center"
+                          style={{ backgroundImage: `url('${avatar}')` }}
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-xs font-semibold uppercase text-neutral-200">
+                          {channelName.charAt(0)}
+                        </div>
+                      )}
+                    </div>
 
-                  <div className="pt-1 text-lg leading-none text-neutral-500">
-                    ⋮
+                    <div className="min-w-0 flex-1">
+                      <h2 className="truncate text-base font-medium leading-snug text-neutral-50 transition-colors group-hover:text-white">
+                        {title}
+                      </h2>
+                    </div>
+
+                    <div className="pt-1 text-lg leading-none text-neutral-500">
+                      ⋮
+                    </div>
                   </div>
-                </div>
-              </a>
+                </a>
+
+                <form action={downloadAction}>
+                  <Button
+                    type="submit"
+                    variant="secondary"
+                    className="w-full bg-neutral-800 text-neutral-100 hover:bg-neutral-700"
+                    disabled={!videoId}
+                  >
+                    Download MP3
+                  </Button>
+                </form>
+              </article>
             );
           })}
         </div>
