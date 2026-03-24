@@ -18,8 +18,9 @@ export type SaveDownloadHistoryInput = {
   duration?: string | null;
 };
 
-const DOWNLOAD_HISTORY_STORAGE_KEY = "ourtube:download-history:v1";
-const DOWNLOAD_HISTORY_UPDATED_EVENT = "ourtube:download-history-updated";
+export const DOWNLOAD_HISTORY_STORAGE_KEY = "ourtube:download-history:v1";
+export const DOWNLOAD_HISTORY_UPDATED_EVENT =
+  "ourtube:download-history-updated";
 const MAX_HISTORY_ITEMS = 100;
 
 function asString(value: unknown): string | null {

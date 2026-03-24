@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
+  DOWNLOAD_HISTORY_STORAGE_KEY,
+  DOWNLOAD_HISTORY_UPDATED_EVENT,
   getDownloadHistory,
-  subscribeToDownloadHistory,
 } from "@/lib/download-history";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 
 const EMPTY_DOWNLOAD_HISTORY: ReturnType<typeof getDownloadHistory> = [];
 
@@ -22,11 +23,12 @@ function formatDownloadedAt(isoDate: string): string {
 }
 
 export default function DownloadsPage() {
-  const items = useSyncExternalStore(
-    subscribeToDownloadHistory,
-    getDownloadHistory,
-    () => EMPTY_DOWNLOAD_HISTORY,
-  );
+  const items = useLocalStorage({
+    initialValue: EMPTY_DOWNLOAD_HISTORY,
+    readValue: getDownloadHistory,
+    storageKey: DOWNLOAD_HISTORY_STORAGE_KEY,
+    syncEvent: DOWNLOAD_HISTORY_UPDATED_EVENT,
+  });
 
   return (
     <main className="min-h-screen bg-neutral-950 px-4 py-10 text-neutral-100 md:px-8">

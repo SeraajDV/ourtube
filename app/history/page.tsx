@@ -1,14 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useSyncExternalStore } from "react";
+import { useMemo } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
+  DOWNLOAD_HISTORY_STORAGE_KEY,
+  DOWNLOAD_HISTORY_UPDATED_EVENT,
   DownloadHistoryItem,
   getDownloadHistory,
-  subscribeToDownloadHistory,
 } from "@/lib/download-history";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 
 const EMPTY_DOWNLOAD_HISTORY: ReturnType<typeof getDownloadHistory> = [];
 
@@ -89,11 +91,12 @@ function isToday(isoDate: string): boolean {
 }
 
 export default function HistoryPage() {
-  const items = useSyncExternalStore(
-    subscribeToDownloadHistory,
-    getDownloadHistory,
-    () => EMPTY_DOWNLOAD_HISTORY,
-  );
+  const items = useLocalStorage({
+    initialValue: EMPTY_DOWNLOAD_HISTORY,
+    readValue: getDownloadHistory,
+    storageKey: DOWNLOAD_HISTORY_STORAGE_KEY,
+    syncEvent: DOWNLOAD_HISTORY_UPDATED_EVENT,
+  });
 
   const analytics = useMemo(() => {
     const totalDownloads = items.length;
