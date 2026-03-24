@@ -8,6 +8,10 @@ import { Button } from "@/components/ui/button";
 interface DownloadMp3FormProps {
   disabled: boolean;
   videoUrl: string;
+  title: string;
+  channelName: string;
+  thumbnailUrl?: string;
+  duration?: string;
 }
 
 function DownloadSubmitButton({
@@ -32,7 +36,14 @@ function DownloadSubmitButton({
   );
 }
 
-export function DownloadMp3Form({ disabled, videoUrl }: DownloadMp3FormProps) {
+export function DownloadMp3Form({
+  disabled,
+  videoUrl,
+  title,
+  channelName,
+  thumbnailUrl,
+  duration,
+}: DownloadMp3FormProps) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
 
@@ -43,7 +54,20 @@ export function DownloadMp3Form({ disabled, videoUrl }: DownloadMp3FormProps) {
 
     setPending(true);
 
-    router.push(`/download?videoUrl=${encodeURIComponent(videoUrl)}`);
+    const params = new URLSearchParams();
+    params.set("videoUrl", videoUrl);
+    params.set("title", title);
+    params.set("channelName", channelName);
+
+    if (thumbnailUrl) {
+      params.set("thumbnailUrl", thumbnailUrl);
+    }
+
+    if (duration) {
+      params.set("duration", duration);
+    }
+
+    router.push(`/download?${params.toString()}`);
   }
 
   return (

@@ -1,4 +1,5 @@
 import { Menu } from "lucide-react";
+import Link from "next/link";
 import { ThemeToggle } from "../theme/theme-toggle";
 import {
   Sheet,
@@ -7,6 +8,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
+import { Button } from "../ui/button";
 import AppAvatar from "./app-avatar";
 import Logo from "./logo";
 import SearchBar from "./search-bar";
