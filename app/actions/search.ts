@@ -1,9 +1,7 @@
 "use server";
 
 const RAPIDAPI_HOST = "yt-search-and-download-mp3.p.rapidapi.com";
-const RAPIDAPI_KEY =
-  process.env.RAPIDAPI_KEY ??
-  "1f7375e039msh17fdbd9e66664eap1c7999jsn31426c9223e8";
+const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY!;
 
 type SearchApiResponse = {
   videos?: unknown[];
