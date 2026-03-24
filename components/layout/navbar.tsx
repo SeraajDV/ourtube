@@ -49,17 +49,23 @@ function Navbar() {
         <nav className="flex flex-col gap-1 px-2 mt-2">
           <Link
             href="/downloads"
-            className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+            className="group flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative overflow-hidden before:absolute before:inset-0 before:rounded-md before:bg-accent before:scale-x-0 before:origin-left hover:before:scale-x-100 before:transition-transform before:duration-200"
           >
-            <Download size={16} />
-            Downloads
+            <Download
+              size={16}
+              className="relative z-10 group-hover:text-primary transition-colors duration-200"
+            />
+            <span className="relative z-10">Downloads</span>
           </Link>
           <Link
             href="/history"
-            className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+            className="group flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative overflow-hidden before:absolute before:inset-0 before:rounded-md before:bg-accent before:scale-x-0 before:origin-left hover:before:scale-x-100 before:transition-transform before:duration-200"
           >
-            <History size={16} />
-            History
+            <History
+              size={16}
+              className="relative z-10 group-hover:text-primary transition-colors duration-200"
+            />
+            <span className="relative z-10">History</span>
           </Link>
         </nav>
       </SheetContent>
