@@ -10,6 +10,8 @@ import {
   subscribeToDownloadHistory,
 } from "@/lib/download-history";
 
+const EMPTY_DOWNLOAD_HISTORY: ReturnType<typeof getDownloadHistory> = [];
+
 function formatDateTime(isoDate: string): string {
   const parsed = new Date(isoDate);
 
@@ -90,7 +92,7 @@ export default function HistoryPage() {
   const items = useSyncExternalStore(
     subscribeToDownloadHistory,
     getDownloadHistory,
-    () => [],
+    () => EMPTY_DOWNLOAD_HISTORY,
   );
 
   const analytics = useMemo(() => {
