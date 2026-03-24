@@ -1,4 +1,4 @@
-import { Menu } from "lucide-react";
+import { Download, History, Menu, PauseIcon } from "lucide-react";
 import Link from "next/link";
 import { ThemeToggle } from "../theme/theme-toggle";
 import {
@@ -32,9 +32,36 @@ function Navbar() {
         </div>
       </nav>
       <SheetContent side="left" showCloseButton={false}>
-        <SheetHeader className="flex">
-          <SheetTitle>OurTube</SheetTitle>
+        <SheetHeader>
+          <SheetTitle asChild>
+            <Link href="/">
+              <div className="flex items-center">
+                <div className="bg-primary px-2.5 py-1 rounded-sm mr-1 text-white">
+                  <PauseIcon size={12} />
+                </div>
+                <span className="font-bold text-lg leading-tight tracking-tight">
+                  OurTube
+                </span>
+              </div>
+            </Link>
+          </SheetTitle>
         </SheetHeader>
+        <nav className="flex flex-col gap-1 px-2 mt-2">
+          <Link
+            href="/downloads"
+            className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+          >
+            <Download size={16} />
+            Downloads
+          </Link>
+          <Link
+            href="/history"
+            className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+          >
+            <History size={16} />
+            History
+          </Link>
+        </nav>
       </SheetContent>
     </Sheet>
   );
