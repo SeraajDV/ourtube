@@ -1,5 +1,4 @@
-import { downloadMp3Redirect } from "@/app/actions/download";
-import { Button } from "@/components/ui/button";
+import { DownloadMp3Form } from "@/components/search/download-mp3-form";
 
 export type RawVideo = Record<string, unknown>;
 
@@ -124,41 +123,6 @@ function getVideoUrl(video: RawVideo): string {
   return "#";
 }
 
-function getVideoId(video: RawVideo): string | undefined {
-  const directId = firstString([
-    fromRecord(video, "videoId"),
-    fromRecord(video, "id"),
-  ]);
-
-  if (directId) {
-    return directId;
-  }
-
-  const href = getVideoUrl(video);
-
-  if (href === "#") {
-    return undefined;
-  }
-
-  try {
-    const url = new URL(href);
-    const queryId = url.searchParams.get("v");
-
-    if (queryId?.trim()) {
-      return queryId;
-    }
-
-    if (url.hostname === "youtu.be") {
-      const pathId = url.pathname.slice(1).trim();
-      return pathId || undefined;
-    }
-  } catch {
-    return undefined;
-  }
-
-  return undefined;
-}
-
 export function SearchResultsGrid({
   searchQuery,
   videos,
@@ -181,10 +145,6 @@ export function SearchResultsGrid({
             const avatar = getChannelAvatar(video);
             const duration = getDuration(video);
             const href = getVideoUrl(video);
-            const videoId = getVideoId(video);
-            const downloadAction = videoId
-              ? downloadMp3Redirect.bind(null, videoId)
-              : undefined;
 
             return (
               <article key={`${title}-${index}`} className="space-y-2.5">
@@ -236,16 +196,7 @@ export function SearchResultsGrid({
                   </div>
                 </a>
 
-                <form action={downloadAction}>
-                  <Button
-                    type="submit"
-                    variant="secondary"
-                    className="w-full bg-neutral-800 text-neutral-100 hover:bg-neutral-700"
-                    disabled={!videoId}
-                  >
-                    Download MP3
-                  </Button>
-                </form>
+                <DownloadMp3Form disabled={href === "#"} videoUrl={href} />
               </article>
             );
           })}
