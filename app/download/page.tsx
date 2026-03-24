@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { saveDownloadHistoryItem } from "@/lib/download-history";
 
 type DownloadState = {
   pending: boolean;
@@ -24,6 +25,11 @@ function normalizeParam(value: string | null): string | null {
 export default function DownloadPage() {
   const searchParams = useSearchParams();
   const videoUrl = normalizeParam(searchParams.get("videoUrl"));
+  const title = normalizeParam(searchParams.get("title"));
+  const channelName = normalizeParam(searchParams.get("channelName"));
+  const thumbnailUrl = normalizeParam(searchParams.get("thumbnailUrl"));
+  const duration = normalizeParam(searchParams.get("duration"));
+  const savedDownloadKeyRef = useRef<string | null>(null);
   const [state, setState] = useState<DownloadState>({
     pending: false,
     error: null,
@@ -90,6 +96,28 @@ export default function DownloadPage() {
     void prepareDownload();
   }, [prepareDownload]);
 
+  useEffect(() => {
+    if (!videoUrl || !state.downloadUrl) {
+      return;
+    }
+
+    const entryKey = `${videoUrl}::${state.downloadUrl}`;
+    if (savedDownloadKeyRef.current === entryKey) {
+      return;
+    }
+
+    saveDownloadHistoryItem({
+      sourceVideoUrl: videoUrl,
+      downloadUrl: state.downloadUrl,
+      title,
+      channelName,
+      thumbnailUrl,
+      duration,
+    });
+
+    savedDownloadKeyRef.current = entryKey;
+  }, [channelName, duration, state.downloadUrl, thumbnailUrl, title, videoUrl]);
+
   return (
     <main className="min-h-screen bg-neutral-950 px-4 py-10 text-neutral-100 md:px-8">
       <div className="mx-auto w-full max-w-2xl rounded-3xl border border-neutral-800 bg-neutral-900/60 p-6 md:p-8">
@@ -100,6 +128,15 @@ export default function DownloadPage() {
         <p className="mt-2 text-sm text-neutral-400">
           We are preparing the final download link for your selected video.
         </p>
+
+        <div className="mt-3 flex flex-wrap gap-3">
+          <Button asChild type="button" variant="secondary">
+            <Link href="/downloads">View download history</Link>
+          </Button>
+          <Button asChild type="button" variant="secondary">
+            <Link href="/search">Back to search</Link>
+          </Button>
+        </div>
 
         {state.pending ? (
           <div className="mt-8 flex items-center gap-3 rounded-2xl border border-neutral-800 bg-neutral-900 p-4">
@@ -137,6 +174,9 @@ export default function DownloadPage() {
               <a href={state.downloadUrl} rel="noreferrer" target="_blank">
                 Get MP3
               </a>
+            </Button>
+            <Button asChild type="button" variant="secondary">
+              <Link href="/downloads">See all downloads</Link>
             </Button>
           </div>
         ) : null}

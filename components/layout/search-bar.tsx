@@ -2,14 +2,44 @@
 
 import { Mic, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { FormEvent, KeyboardEvent, useEffect, useState } from "react";
+import {
+  FormEvent,
+  KeyboardEvent,
+  useSyncExternalStore,
+  useState,
+} from "react";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 
+function subscribeToMount(onStoreChange: () => void) {
+  if (typeof window === "undefined") {
+    return () => {};
+  }
+
+  const run = () => onStoreChange();
+  window.addEventListener("load", run);
+
+  return () => {
+    window.removeEventListener("load", run);
+  };
+}
+
+function getMountedSnapshot() {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return document.readyState !== "loading";
+}
+
 function SearchBar() {
   const [query, setQuery] = useState("");
-  const [hasMounted, setHasMounted] = useState(false);
+  const hasMounted = useSyncExternalStore(
+    subscribeToMount,
+    getMountedSnapshot,
+    () => false,
+  );
   const router = useRouter();
   const {
     transcript,
@@ -18,16 +48,11 @@ function SearchBar() {
     resetTranscript,
   } = useSpeechRecognition();
 
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (transcript) setQuery(transcript);
-  }, [transcript]);
-
   const toggleListening = () => {
     if (listening) {
+      if (transcript.trim()) {
+        setQuery(transcript.trim());
+      }
       SpeechRecognition.stopListening();
     } else {
       resetTranscript();
@@ -37,6 +62,7 @@ function SearchBar() {
 
   const canUseVoice = hasMounted && browserSupportsSpeechRecognition;
   const isListening = hasMounted && listening;
+  const searchValue = isListening && transcript.trim() ? transcript : query;
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -61,13 +87,13 @@ function SearchBar() {
       >
         <input
           type="text"
-          value={query}
+          value={searchValue}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleInputKeyDown}
           placeholder="Search"
           className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
         />
-        {query && (
+        {searchValue && (
           <button
             type="button"
             onClick={() => setQuery("")}

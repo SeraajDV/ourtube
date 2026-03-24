@@ -9,6 +9,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import Link from "next/link";
 
 function AppAvatar() {
   return (
@@ -22,8 +23,8 @@ function AppAvatar() {
       <DropdownMenuContent>
         <DropdownMenuGroup>
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuItem>Downloads</DropdownMenuItem>
-          <DropdownMenuItem>History</DropdownMenuItem>
+          <DropdownMenuItem><Link href="/downloads">Downloads</Link></DropdownMenuItem>
+          <DropdownMenuItem><Link href="/history">History</Link></DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

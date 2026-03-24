@@ -196,7 +196,14 @@ export function SearchResultsGrid({
                   </div>
                 </a>
 
-                <DownloadMp3Form disabled={href === "#"} videoUrl={href} />
+                <DownloadMp3Form
+                  disabled={href === "#"}
+                  videoUrl={href}
+                  title={title}
+                  channelName={channelName}
+                  thumbnailUrl={thumbnail}
+                  duration={duration}
+                />
               </article>
             );
           })}
