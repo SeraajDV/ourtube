@@ -13,7 +13,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       <div className="flex md:hidden px-4 pt-4 mb-4">
         <SearchBar defaultValue={queryString} />
       </div>
-      <div className="px-4">SearchPage: {query}</div>
+      <div className="px-4">Search: {query}</div>
     </div>
   );
 }
