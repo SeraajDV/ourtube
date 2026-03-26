@@ -2,7 +2,12 @@
 
 import { Mic, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { FormEvent, KeyboardEvent, useEffect, useState } from "react";
+import {
+  FormEvent,
+  KeyboardEvent,
+  useSyncExternalStore,
+  useState,
+} from "react";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
@@ -22,16 +27,11 @@ function SearchBar({ defaultValue = "" }: SearchBarProps) {
     resetTranscript,
   } = useSpeechRecognition();
 
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (transcript) setQuery(transcript);
-  }, [transcript]);
-
   const toggleListening = () => {
     if (listening) {
+      if (transcript.trim()) {
+        setQuery(transcript.trim());
+      }
       SpeechRecognition.stopListening();
     } else {
       resetTranscript();
@@ -41,6 +41,7 @@ function SearchBar({ defaultValue = "" }: SearchBarProps) {
 
   const canUseVoice = hasMounted && browserSupportsSpeechRecognition;
   const isListening = hasMounted && listening;
+  const searchValue = isListening && transcript.trim() ? transcript : query;
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -65,13 +66,13 @@ function SearchBar({ defaultValue = "" }: SearchBarProps) {
       >
         <input
           type="text"
-          value={query}
+          value={searchValue}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleInputKeyDown}
           placeholder="Search"
           className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
         />
-        {query && (
+        {searchValue && (
           <button
             type="button"
             onClick={() => setQuery("")}
