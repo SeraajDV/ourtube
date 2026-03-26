@@ -12,34 +12,13 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 
-function subscribeToMount(onStoreChange: () => void) {
-  if (typeof window === "undefined") {
-    return () => {};
-  }
-
-  const run = () => onStoreChange();
-  window.addEventListener("load", run);
-
-  return () => {
-    window.removeEventListener("load", run);
-  };
+interface SearchBarProps {
+  defaultValue?: string;
 }
 
-function getMountedSnapshot() {
-  if (typeof window === "undefined") {
-    return false;
-  }
-
-  return document.readyState !== "loading";
-}
-
-function SearchBar() {
-  const [query, setQuery] = useState("");
-  const hasMounted = useSyncExternalStore(
-    subscribeToMount,
-    getMountedSnapshot,
-    () => false,
-  );
+function SearchBar({ defaultValue = "" }: SearchBarProps) {
+  const [query, setQuery] = useState(defaultValue);
+  const [hasMounted, setHasMounted] = useState(false);
   const router = useRouter();
   const {
     transcript,

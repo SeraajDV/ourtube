@@ -1,8 +1,4 @@
-import { getSearchResults } from "../actions/search";
-import {
-  RawVideo,
-  SearchResultsGrid,
-} from "../../components/search/search-results-grid";
+import SearchBar from "@/components/layout/search-bar";
 
 interface SearchPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -10,11 +6,14 @@ interface SearchPageProps {
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const { query } = await searchParams;
-  const searchQuery = Array.isArray(query) ? (query[0] ?? "") : (query ?? "");
-  const result = await getSearchResults(searchQuery);
-  const videos = (
-    Array.isArray(result.videos) ? result.videos : []
-  ) as RawVideo[];
+  const queryString = Array.isArray(query) ? query[0] : query;
 
-  return <SearchResultsGrid searchQuery={searchQuery} videos={videos} />;
+  return (
+    <div>
+      <div className="flex md:hidden px-4 pt-4 mb-4">
+        <SearchBar defaultValue={queryString} />
+      </div>
+      <div className="px-4">Search: {query}</div>
+    </div>
+  );
 }
