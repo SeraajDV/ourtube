@@ -7,8 +7,12 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 
-function SearchBar() {
-  const [query, setQuery] = useState("");
+interface SearchBarProps {
+  defaultValue?: string;
+}
+
+function SearchBar({ defaultValue = "" }: SearchBarProps) {
+  const [query, setQuery] = useState(defaultValue);
   const [hasMounted, setHasMounted] = useState(false);
   const router = useRouter();
   const {
